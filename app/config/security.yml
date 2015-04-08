@@ -1,7 +1,15 @@
 security:
+    encoders:
+        Symfony\Component\Security\Core\User\User: plaintext
+
     providers:
         in_memory:
-            memory: ~
+            memory:
+                users:
+                    spanish_inquisition:
+                        password: 'NobodyExpectsIt!'
+                        roles:
+                            - ROLE_USER
 
     firewalls:
         dev:
@@ -10,3 +18,8 @@ security:
 
         default:
             anonymous: ~
+            http_basic: ~
+            stateless: true
+
+    access_control:
+        - { path: /.*, roles: ROLE_USER }
