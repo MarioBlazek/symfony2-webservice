@@ -4,9 +4,7 @@ parameters:
 #    parameter_name: value
 
 services:
-#    service_name:
-#        class: AppBundle\Directory\ClassName
-#        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
+
     app.submit_json_listener:
         class: AppBundle\EventListener\SubmitJsonListener
         tags:
@@ -15,4 +13,23 @@ services:
     app.forbidden_exception_listener:
         class: AppBundle\EventListener\ForbiddenExceptionListener
         tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelException, priority: 10 }
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 10 }
+
+    app.domain_exception_listener:
+        class: AppBundle\EventListener\DomainExceptionListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 10 }
+
+    app.profile_repository:
+        class: Doctrine\Common\Persistence\ObjectRepository
+        factory_service: doctrine.orm.default_entity_manager
+        factory_method: getRepository
+        arguments: [ AppBundle\Entity\Profile ]
+
+    app.create_profile_handler:
+        class: AppBundle\CommandBus\CreateProfileHandler
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@app.profile_repository"
+        tags:
+            - { name: command_handler, handles: AppBundle\CommandBus\CreateProfile }

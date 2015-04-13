@@ -7,6 +7,9 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 class SubmitJsonListener
 {
+    /**
+     * @param GetResponseEvent $event
+     */
     public function onKernelRequest(GetResponseEvent $event)
     {
         $request = $event->getRequest();
